@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Ira, mau jalan bareng nggak? 💖</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  /* ==========================================================
+     PALET: langit senja
+     ========================================================== */
+  :root{
+    --sky-top:    #191233;
+    --sky-mid:    #3d2452;
+    --sky-glow:   #b4527e;
+    --horizon:    #ff8fb1;
+    --card:       #fff7f2;
+    --ink:        #4a2338;
+    --ink-soft:   #8a5c74;
+    --rose:       #ff5c8a;
+    --rose-deep:  #e8437a;
+    --line:       #f3ddda;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ height:100%; }
+  body{
+    font-family:'Nunito', system-ui, sans-serif;
+    color:var(--ink);
+    background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 46%, var(--sky-glow) 78%, var(--horizon) 100%);
+    min-height:100dvh;
+    overflow:hidden;
+    display:grid;
+    place-items:center;
+    touch-action:manipulation;
+    overscroll-behavior:none;
+  }
+
+  /* ============ LANGIT: bintang + sedikit hati ============ */
+  .sky{ position:fixed; inset:0; perspective:1000px; pointer-events:none; overflow:hidden; }
+  .star{
+    position:absolute; width:3px; height:3px; border-radius:50%;
+    background:#ffe9f3; opacity:.8;
+    animation: twinkle 3.2s ease-in-out infinite;
+  }
+  @keyframes twinkle{ 0%,100%{opacity:.15; transform:scale(.7)} 50%{opacity:.9; transform:scale(1.15)} }
+
+  .heart3d{
+    position:absolute;
+    filter: drop-shadow(0 0 10px rgba(255,143,177,.5));
+    transform: translate3d(calc(var(--mx,0) * var(--depth)), calc(var(--my,0) * var(--depth)), 0);
+    animation: floaty var(--dur,12s) ease-in-out infinite;
+    will-change: transform;
+    opacity:.55;
+  }
+  @keyframes floaty{
+    0%,100%{ margin-top:0;    rotate:-4deg; }
+    50%    { margin-top:-10px; rotate:4deg;  }
+  }
+
+  /* ============ PANGGUNG 3D ============ */
+  .stage{
+    perspective:1200px;
+    width:min(94vw, 480px);
+    position:relative; z-index:2;
+    padding:12px;
+  }
+  .card{
+    background:var(--card);
+    border-radius:28px;
+    padding:40px 28px 34px;
+    box-shadow: 0 30px 60px -18px rgba(25,18,51,.55), 0 0 0 6px rgba(255,255,255,.09);
+    transform-style:preserve-3d;
+    transform: rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+    transition: transform .12s ease-out;
+    text-align:center;
+    position:relative;
+  }
+  .card > *{ transform: translateZ(34px); }
+  .card::after{
+    content:""; position:absolute; inset:0; border-radius:28px;
+    background: radial-gradient(600px 200px at var(--gx,50%) -20%, rgba(255,255,255,.55), transparent 60%);
+    pointer-events:none;
+  }
+
+  .fold-out{ animation: foldOut .5s ease-in forwards; }
+  .fold-in { animation: foldIn  .6s cubic-bezier(.2,1.4,.4,1) forwards; }
+  @keyframes foldOut{ to{ transform: rotateY(-92deg) translateZ(10px); opacity:.2; } }
+  @keyframes foldIn { from{ transform: rotateY(92deg); opacity:0; } to{ transform: rotateY(0deg); opacity:1; } }
+  .hidden{ display:none !important; }
+
+  /* ============ LAYAR 1: PERTANYAAN ============ */
+  .emo{ font-size:58px; line-height:1; display:inline-block; animation: bounceSoft 2.4s ease-in-out infinite; }
+  @keyframes bounceSoft{ 0%,100%{ translate:0 0 } 50%{ translate:0 -10px } }
+  h1{
+    font-family:'Baloo 2', cursive;
+    font-weight:800; font-size: clamp(24px, 6.4vw, 34px);
+    margin:14px 0 6px; color:var(--ink);
+  }
+  h1 .nama{ color:var(--rose-deep); }
+  .sub{ color:var(--ink-soft); font-weight:600; margin-bottom:26px; }
+
+  .btn-row{ display:flex; gap:14px; justify-content:center; align-items:center; flex-wrap:wrap; }
+  .btn{
+    font-family:'Baloo 2', cursive; font-weight:700; font-size:18px;
+    border:none; border-radius:999px; padding:15px 30px; cursor:pointer;
+  }
+  #btnYes{
+    background: linear-gradient(135deg, var(--rose) 0%, var(--rose-deep) 100%);
+    color:#fff;
+    box-shadow: 0 12px 26px -8px rgba(232,67,122,.65);
+    animation: pulseGlow 2s ease-in-out infinite;
+    transition: transform .18s ease;
+  }
+  #btnYes:hover{ scale:1.05; }
+  @keyframes pulseGlow{ 0%,100%{ box-shadow:0 12px 26px -8px rgba(232,67,122,.65)} 50%{ box-shadow:0 12px 36px -4px rgba(232,67,122,.95)} }
+  #btnNo{
+    background:#fff; color:var(--ink-soft);
+    box-shadow: 0 8px 18px -8px rgba(74,35,56,.35), inset 0 0 0 2px var(--line);
+    transition: left .25s cubic-bezier(.25,1.3,.4,1), top .25s cubic-bezier(.25,1.3,.4,1), transform .2s;
+    touch-action:none;
+    user-select:none;
+  }
+  #btnNo.fleeing{ position:fixed; z-index:50; }
+  .hint{ margin-top:22px; font-size:13px; color:var(--ink-soft); opacity:.85; }
+
+  /* ============ LAYAR 2: FORM ============ */
+  form{ text-align:left; }
+  .form-title{ font-family:'Baloo 2',cursive; font-weight:800; font-size:24px; text-align:center; }
+  .form-sub{ text-align:center; color:var(--ink-soft); font-weight:600; font-size:14px; margin:4px 0 18px; }
+  label.lbl{ display:block; font-weight:800; font-size:13px; letter-spacing:.4px; text-transform:uppercase; color:var(--rose-deep); margin:16px 0 8px; }
+
+  .chips{ display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+  .chips::-webkit-scrollbar{ display:none; }
+  .chip{
+    flex:0 0 auto; border:2px solid var(--line); background:#fff; border-radius:16px;
+    padding:8px 4px; width:66px; text-align:center; cursor:pointer;
+    font-family:'Nunito'; transition: all .16s ease;
+  }
+  .chip .d{ display:block; font-size:10px; font-weight:800; color:var(--ink-soft); text-transform:uppercase; white-space:nowrap; }
+  .chip .n{ display:block; font-family:'Baloo 2'; font-size:20px; font-weight:800; color:var(--ink); }
+  .chip .m{ display:block; font-size:11px; font-weight:700; color:var(--ink-soft); }
+  .chip.on{ background:linear-gradient(135deg,var(--rose),var(--rose-deep)); border-color:transparent; transform:translateY(-3px); box-shadow:0 10px 20px -8px rgba(232,67,122,.6); }
+  .chip.on .d,.chip.on .n,.chip.on .m{ color:#fff; }
+  .chip.today{ border-color:var(--rose); }
+
+  input[type=time], textarea{
+    width:100%; border:2px solid var(--line); border-radius:14px; background:#fff;
+    padding:12px 14px; font-family:'Nunito'; font-weight:700; font-size:16px; color:var(--ink);
+    outline:none; transition:border-color .15s;
+    -webkit-appearance:none; appearance:none;
+  }
+  input[type=time]:focus, textarea:focus{ border-color:var(--rose); }
+  textarea{ resize:none; min-height:80px; font-weight:600; }
+
+  .places{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .place{
+    border:2px solid var(--line); background:#fff; border-radius:18px;
+    padding:13px 6px; text-align:center; cursor:pointer; transition:all .16s ease;
+  }
+  .place .ic{ font-size:26px; display:block; }
+  .place .t{ font-family:'Baloo 2'; font-weight:700; font-size:14px; color:var(--ink); }
+  .place.on{ background:linear-gradient(135deg,var(--rose),var(--rose-deep)); border-color:transparent; transform:translateY(-3px) scale(1.03); box-shadow:0 10px 20px -8px rgba(232,67,122,.6); }
+  .place.on .t{ color:#fff; }
+
+  .submit{
+    margin-top:20px; width:100%;
+    font-family:'Baloo 2'; font-weight:800; font-size:18px; color:#fff;
+    background:linear-gradient(135deg,var(--rose),var(--rose-deep));
+    border:none; border-radius:999px; padding:15px; cursor:pointer;
+    box-shadow:0 14px 30px -10px rgba(232,67,122,.7);
+    transition:transform .18s ease;
+  }
+  .submit:active{ transform:scale(.97); }
+  .err{ color:var(--rose-deep); font-size:13px; font-weight:700; text-align:center; margin-top:10px; min-height:18px; }
+
+  /* ============ MODAL ============ */
+  .overlay{
+    position:fixed; inset:0; background:rgba(25,18,51,.6); backdrop-filter:blur(6px);
+    display:grid; place-items:center; z-index:100; opacity:0; pointer-events:none; transition:opacity .3s;
+    padding:16px;
+  }
+  .overlay.show{ opacity:1; pointer-events:auto; }
+  .modal{
+    background:var(--card); border-radius:28px; padding:38px 26px; width:min(92vw,380px);
+    text-align:center; transform:scale(.7) rotateX(18deg); transition:transform .45s cubic-bezier(.2,1.5,.4,1);
+    box-shadow:0 40px 80px -20px rgba(0,0,0,.5);
+  }
+  .overlay.show .modal{ transform:scale(1) rotateX(0deg); }
+  .modal .big{ font-size:54px; display:inline-block; }
+  .modal h2{ font-family:'Baloo 2'; font-weight:800; font-size:30px; margin:10px 0 6px; }
+  .modal h2 span{ color:var(--rose-deep); }
+  .modal p{ color:var(--ink-soft); font-weight:600; font-size:14px; margin-bottom:20px; }
+  .wa-btn{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'Baloo 2'; font-weight:800; font-size:17px; color:#fff;
+    background:linear-gradient(135deg,#25d366,#128c7e);
+    border:none; border-radius:999px; padding:14px 26px; cursor:pointer; text-decoration:none;
+    box-shadow:0 14px 28px -10px rgba(18,140,126,.7);
+    transition:transform .18s ease;
+  }
+  .wa-btn:active{ transform:scale(.96); }
+
+  /* partikel hati (dipakai hemat) */
+  .pop{
+    position:fixed; z-index:200; pointer-events:none; font-size:20px;
+    animation:pop 1s ease-out forwards;
+  }
+  @keyframes pop{
+    from{ transform:translate(0,0) scale(.6) rotate(0deg); opacity:1; }
+    to  { transform:translate(var(--dx),var(--dy)) scale(1.2) rotate(var(--rot)); opacity:0; }
+  }
+
+  /* ============ OPTIMASI LAYAR KECIL ============ */
+  @media (max-width:420px){
+    .card{ padding:30px 20px 26px; border-radius:24px; }
+    .emo{ font-size:48px; }
+    .btn{ font-size:16px; padding:13px 24px; }
+    .modal h2{ font-size:26px; }
+  }
+  @media (max-height:700px){
+    .emo{ font-size:44px; }
+    .sub{ margin-bottom:18px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="sky" id="sky"></div>
+
+<div class="stage">
+  <!-- ================= LAYAR 1 ================= -->
+  <div class="card" id="askCard">
+    <span class="emo">🥺👉👈</span>
+    <h1><span class="nama">Ira</span>, mau jalan bareng aku nggak?</h1>
+    <p class="sub">sekali aja... janji seru deh ✨</p>
+    <div class="btn-row" id="btnRow">
+      <button class="btn" id="btnYes">Mau! 💖</button>
+      <button class="btn" id="btnNo" type="button">Nggak mau</button>
+    </div>
+    <p class="hint">pilih yang jujur ya hehe 😌</p>
+  </div>
+
+  <!-- ================= LAYAR 2: FORM ================= -->
+  <div class="card hidden" id="formCard">
+    <form id="dateForm" novalidate>
+      <div class="form-title">Yeayy! 🎉</div>
+      <p class="form-sub">sekarang tinggal atur jalan barengnya~</p>
+
+      <label class="lbl">📅 Pilih tanggalnya</label>
+      <div class="chips" id="dayChips"></div>
+
+      <label class="lbl" for="jam">⏰ Jam berapa?</label>
+      <input type="time" id="jam" value="16:00" />
+
+      <label class="lbl">📍 Sukanya ke mana?</label>
+      <div class="places" id="places">
+        <div class="place" data-v="Laut 🌊"><span class="ic">🌊</span><span class="t">Laut</span></div>
+        <div class="place" data-v="Gunung ⛰️"><span class="ic">⛰️</span><span class="t">Gunung</span></div>
+        <div class="place" data-v="Cafe ☕"><span class="ic">☕</span><span class="t">Cafe</span></div>
+      </div>
+
+      <label class="lbl" for="pesan">💌 Pesan buat aku</label>
+      <textarea id="pesan" placeholder="tulis apa aja di sini..."></textarea>
+
+      <button class="submit" type="submit">Kirim jawaban 💘</button>
+      <div class="err" id="err"></div>
+    </form>
+  </div>
+</div>
+
+<!-- ================= MODAL ================= -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <span class="big">💖</span>
+    <h2>See you, <span>Ira</span>!</h2>
+    <p>Jawaban kamu udah siap meluncur.<br/>Tinggal satu klik lagi ya~ ✨</p>
+    <a class="wa-btn" id="waBtn" target="_blank" rel="noopener">Kirim ke WhatsApp 💌</a>
+  </div>
+</div>
+
+<script>
+/* ==========================================================================
+   ⚙️ PENGATURAN
+   WA_NUMBER : nomor WhatsApp kamu (082237603979 → format internasional)
+   NAMA      : nama gebetan (dipakai di pesan WhatsApp)
+   ========================================================================== */
+const WA_NUMBER = "6282237603979";   // nomor WhatsApp kamu — sudah terpasang
+const NAMA      = "Ira";
+
+/* ---------------- Langit: bintang + sedikit hati ---------------- */
+const sky = document.getElementById('sky');
+const isMobile = window.innerWidth < 520;
+const starCount = isMobile ? 36 : 55;
+for (let i = 0; i < starCount; i++){
+  const s = document.createElement('div');
+  s.className = 'star';
+  s.style.left = Math.random()*100 + 'vw';
+  s.style.top  = Math.random()*70 + 'vh';
+  s.style.animationDelay = (Math.random()*3) + 's';
+  sky.appendChild(s);
+}
+/* hati dikurangi: cukup 4 saja, kecil & lembut */
+const heartEmojis = ['💗','💖','🩷'];
+const heartCount = 2;
+for (let i = 0; i < heartCount; i++){
+  const h = document.createElement('div');
+  h.className = 'heart3d';
+  h.textContent = heartEmojis[i % heartEmojis.length];
+  h.style.left = (8 + Math.random()*84) + 'vw';
+  h.style.top  = (8 + Math.random()*80) + 'vh';
+  h.style.fontSize = (14 + Math.random()*12) + 'px';
+  h.style.setProperty('--depth', (10 + Math.random()*30) + 'px');
+  h.style.setProperty('--dur', (8 + Math.random()*6) + 's');
+  h.style.animationDelay = (Math.random()*5) + 's';
+  sky.appendChild(h);
+}
+
+/* ---------------- Tilt 3D mengikuti kursor / kemiringan HP ---------------- */
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let activeCard = document.getElementById('askCard');
+function tilt(x, y){
+  if (reduceMotion || !activeCard) return;
+  const nx = (x / window.innerWidth)  - .5;
+  const ny = (y / window.innerHeight) - .5;
+  activeCard.style.setProperty('--ry', (nx * 12) + 'deg');
+  activeCard.style.setProperty('--rx', (ny * -12) + 'deg');
+  activeCard.style.setProperty('--gx', (50 + nx*80) + '%');
+  document.querySelectorAll('.heart3d').forEach(h=>{
+    h.style.setProperty('--mx', (nx * -1.2));
+    h.style.setProperty('--my', (ny * -1.2));
+  });
+}
+window.addEventListener('pointermove', e => tilt(e.clientX, e.clientY), {passive:true});
+window.addEventListener('deviceorientation', e=>{
+  if (e.gamma == null) return;
+  tilt(window.innerWidth/2 + e.gamma*8, window.innerHeight/2 + (e.beta-45)*6);
+}, {passive:true});
+
+/* ==========================================================================
+   Tombol "Nggak mau": KABUR TAPI TETAP DEKAT (efek dikejar)
+   - lari menjauhi arah jari/kursor sejauh 90–140px saja
+   - selalu di-clamp agar tetap di dalam layar
+   - kalau terpojok, dia menyelinap ke samping
+   ========================================================================== */
+const btnNo  = document.getElementById('btnNo');
+const btnYes = document.getElementById('btnYes');
+const noTexts = ['Nggak mau','Eits 😝','Coba lagi~','Nggak bisa hehe','Yakin nih? 🤨','Capek nggak? 😆','Udah, klik Mau aja 💘'];
+let dodges = 0;
+let dodgeCooldown = false;
+
+function dodge(px, py){
+  if (dodgeCooldown) return;
+  dodgeCooldown = true;
+  setTimeout(()=> dodgeCooldown = false, 220);
+
+  const r = btnNo.getBoundingClientRect();
+  if (!btnNo.classList.contains('fleeing')){
+    btnNo.style.left = r.left + 'px';
+    btnNo.style.top  = r.top  + 'px';
+    btnNo.classList.add('fleeing');
+    /* PENTING: keluarkan dari kartu ber-transform 3D.
+       position:fixed di dalam elemen ber-transform dihitung relatif ke kartu,
+       membuat tombol lompat ke luar layar & terlihat "hilang". */
+    document.body.appendChild(btnNo);
+  }
+
+  const cx = r.left + r.width/2;
+  const cy = r.top  + r.height/2;
+
+  /* arah lari = menjauhi jari, + sedikit belok acak biar lincah */
+  let ang;
+  if (px != null){
+    ang = Math.atan2(cy - py, cx - px) + (Math.random()*.9 - .45);
+  } else {
+    ang = Math.random() * Math.PI * 2;
+  }
+  const dist = 90 + Math.random()*50;   /* dekat saja → terasa bisa dikejar */
+  let nx = r.left + Math.cos(ang) * dist;
+  let ny = r.top  + Math.sin(ang) * dist;
+
+  /* clamp agar SELALU terlihat di layar (pakai visualViewport, aman dari address bar HP) */
+  const pad = 12;
+  const vw = (window.visualViewport && window.visualViewport.width)  || window.innerWidth;
+  const vh = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+  const maxX = vw - r.width  - pad;
+  const maxY = vh - r.height - pad;
+
+  /* kalau nabrak tepi, pantulkan ke arah sebaliknya supaya tidak terpojok */
+  if (nx < pad || nx > maxX){ nx = r.left - Math.cos(ang) * dist; }
+  if (ny < pad || ny > maxY){ ny = r.top  - Math.sin(ang) * dist; }
+  nx = Math.min(Math.max(nx, pad), maxX);
+  ny = Math.min(Math.max(ny, pad), maxY);
+
+  btnNo.style.left = nx + 'px';
+  btnNo.style.top  = ny + 'px';
+
+  dodges++;
+  btnNo.textContent = noTexts[Math.min(dodges, noTexts.length-1)];
+  const grow = Math.min(1 + dodges*0.05, 1.4);
+  btnYes.style.transform = 'scale(' + grow + ')';
+  if (dodges > 5) btnNo.style.transform = 'scale(' + Math.max(1 - (dodges-5)*0.06, .65) + ')';
+}
+
+/* lari saat disentuh / diarahkan */
+btnNo.addEventListener('pointerdown', e => { e.preventDefault(); dodge(e.clientX, e.clientY); });
+btnNo.addEventListener('pointerenter', e => dodge(e.clientX, e.clientY));
+btnNo.addEventListener('click', e => e.preventDefault());
+btnNo.addEventListener('focus', () => { btnNo.blur(); dodge(); });
+
+/* lari saat jari MENDEKAT (seru buat dikejar di HP) */
+function nearDodge(x, y){
+  if (!btnNo.isConnected) return;
+  const r = btnNo.getBoundingClientRect();
+  const cx = r.left + r.width/2, cy = r.top + r.height/2;
+  const d = Math.hypot(x - cx, y - cy);
+  if (d < 80) dodge(x, y);
+}
+document.addEventListener('pointermove', e => nearDodge(e.clientX, e.clientY), {passive:true});
+document.addEventListener('touchmove', e => {
+  const t = e.touches[0];
+  if (t) nearDodge(t.clientX, t.clientY);
+}, {passive:true});
+
+/* ---------------- Partikel hati (hemat) ---------------- */
+function burstHearts(x, y, n = 6){
+  for (let i = 0; i < n; i++){
+    const p = document.createElement('div');
+    p.className = 'pop';
+    p.textContent = heartEmojis[Math.floor(Math.random()*heartEmojis.length)];
+    p.style.left = x + 'px';
+    p.style.top  = y + 'px';
+    p.style.setProperty('--dx', (Math.random()*220 - 110) + 'px');
+    p.style.setProperty('--dy', (-50 - Math.random()*180) + 'px');
+    p.style.setProperty('--rot', (Math.random()*300 - 150) + 'deg');
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(), 1100);
+  }
+}
+
+/* ---------------- "Mau!" → lipat 3D ke form ---------------- */
+const askCard  = document.getElementById('askCard');
+const formCard = document.getElementById('formCard');
+btnYes.addEventListener('click', e=>{
+  burstHearts(e.clientX || window.innerWidth/2, e.clientY || window.innerHeight/2, 6);
+  btnNo.remove();
+  askCard.classList.add('fold-out');
+  setTimeout(()=>{
+    askCard.classList.add('hidden');
+    formCard.classList.remove('hidden');
+    formCard.classList.add('fold-in');
+    activeCard = formCard;
+  }, 480);
+});
+
+/* ---------------- Chip tanggal: HARI INI + 7 hari ke depan ---------------- */
+const hari  = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+const bulan = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+const dayChips = document.getElementById('dayChips');
+let selectedDate = null;
+for (let i = 0; i <= 7; i++){
+  const d = new Date();
+  d.setDate(d.getDate() + i);
+  const chip = document.createElement('div');
+  chip.className = 'chip' + (i === 0 ? ' today' : '');
+  const labelHari = i === 0 ? 'Hari ini' : hari[d.getDay()];
+  chip.innerHTML = '<span class="d">'+labelHari+'</span><span class="n">'+d.getDate()+'</span><span class="m">'+bulan[d.getMonth()]+'</span>';
+  chip.dataset.v = (i === 0 ? 'Hari ini — ' : '') + hari[d.getDay()] + ', ' + d.getDate() + ' ' + bulan[d.getMonth()] + ' ' + d.getFullYear();
+  chip.addEventListener('click', ()=>{
+    dayChips.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+    chip.classList.add('on');
+    selectedDate = chip.dataset.v;
+  });
+  dayChips.appendChild(chip);
+}
+
+/* ---------------- Pilihan tempat ---------------- */
+let selectedPlace = null;
+document.querySelectorAll('.place').forEach(pl=>{
+  pl.addEventListener('click', ()=>{
+    document.querySelectorAll('.place').forEach(p=>p.classList.remove('on'));
+    pl.classList.add('on');
+    selectedPlace = pl.dataset.v;
+  });
+});
+
+/* ---------------- Submit → modal + WhatsApp ---------------- */
+document.getElementById('dateForm').addEventListener('submit', e=>{
+  e.preventDefault();
+  const jam   = document.getElementById('jam').value;
+  const pesan = document.getElementById('pesan').value.trim();
+  const err   = document.getElementById('err');
+
+  if (!selectedDate){ err.textContent = 'Pilih tanggalnya dulu ya 📅'; return; }
+  if (!jam){          err.textContent = 'Jamnya jangan lupa ⏰';       return; }
+  if (!selectedPlace){err.textContent = 'Pilih mau ke mana dong 📍';   return; }
+  err.textContent = '';
+
+  const msg =
+    '💖 ' + NAMA + ' jawab: MAU jalan bareng!\n\n' +
+    '📅 Tanggal : ' + selectedDate + '\n' +
+    '⏰ Jam     : ' + jam + '\n' +
+    '📍 Tempat  : ' + selectedPlace + '\n' +
+    '💌 Pesan   : ' + (pesan || '-');
+
+  document.getElementById('waBtn').href =
+    'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg);
+
+  burstHearts(window.innerWidth/2, window.innerHeight/2, 6);
+  document.getElementById('overlay').classList.add('show');
+});
+</script>
+</body>
+</html>
